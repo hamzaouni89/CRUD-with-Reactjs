@@ -1,55 +1,81 @@
 import React, { Component } from 'react';
 import TodoItems from './components/TodoItems/TodoItems'
 import AddItem from './components/AddItem/AddItem'
+const axios = require('axios');
 class App extends Component {
   state = {
-    users: [
-      { id: 1, firstname: "Hamza", lastname: "ouni" }
-    ],
+    users: [],
     firstname: '',
     lastname: '',
   }
 
-  deleteUser = (index) => {
-    let users = this.state.users;
-    users.splice(index, 1)
-    this.setState({ users })
-
-    // let items = this.state.items.filter(item =>{
-    //   return item.id !==id
-    // });
-    // this.setState({items})
+  componentDidMount(){
+    this.getUsers();
   }
-
+/************************************************** Select All User Function************************************************* */
+  getUsers =() =>{
+    fetch('http://localhost:3300/getUsers')
+    .then(response => response.json())
+    .then(response =>this.setState({ users : response.result}) )
+    .catch(err=>console.error(err))
+  }
+/************************************************** Delete User Function******************************************************** */
+  deleteUser = (index) => {
+    console.log(index);   
+    var self = this;
+    fetch(`http://localhost:3300/deleteUser/${index}`)
+    .then(function(response){
+      self.state.users.splice(response[index],1)
+      self.setState({"users" :self.state.users}) 
+    } )
+    .then()
+    .catch(err=>console.error(err))
+  }
+/**************************************************Insert User Function******************************************************** */
 
   addUser = (event) => {
     event.preventDefault();
-    let users = this.state.users;
-    let firstname = this.state.firstname;
-    let lastname = this.state.lastname;
-    if (event.target.firstname.value === '' && event.target.lastname.value === '' || event.target.lastname.value === '' || event.target.firstname.value === '') {
-      return false
-    } else {
-      users.push({ firstname: firstname, lastname: lastname });
-      this.setState({ users: users, firstname: '', lastname: '' })
+    let {users} = this.state;
+    var self = this;
+    let user = {
+      firstname : this.state.firstname,
+      lastname  : this.state.lastname
     }
+    if (!event.target.firstname.value || !event.target.lastname.value ) {
+          return false
+   } else {
+    axios.post( 'http://localhost:3300/adduser',user)
+      .then(function(response){
+
+        users.push(response.data.user)
+        self.setState({"users" :users}) 
+      })
+      .then()
+      .catch(err=>console.error(err))
   }
-
+   this.setState({  firstname: '', lastname: '' })
+}
+/********************************************************Update User Functions*************************************************** */
   updateUser = (event) => {
-
     this.setState({
       [event.target.name]: event.target.value
     })
-
   }
 
   editUser = (index, valueFirst, valueLast) => {
-    let users = this.state.users;
-    let user = users[index];
-    user['firstname'] = valueFirst;
-    user['lastname'] = valueLast;
-    this.setState(users)
+    let user = {
+      firstname : valueFirst,
+      lastname  : valueLast
+    }
+    axios.post( `http://localhost:3300/updateUser/${index}`,user)
+    .then(response => console.log(response)
+    )
+    .then(this.getUsers)
+    .catch(err=>console.error(err))
   }
+
+
+
   render() {
     const { users } = this.state;  
     const usersList = users.map((user, index) => {

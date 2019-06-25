@@ -11,14 +11,14 @@ class TodoItems extends Component {
                 <span className="firstname"> {this.props.details.firstname} </span>
                 <span className="lastname"> {this.props.details.lastname} </span>
                 <button  type ='submit' className="action icon" onClick={()=>{this.toggleState()}}> Edit User</button>
-                <button  type ='submit' className="action icon" onClick={()=>{this.props.deleteUser(this.props.index)}}> Delete User </button>
+                <button  type ='submit' className="action icon" onClick={()=>{this.props.deleteUser(this.props.details.id)}}> Delete User </button>
             </li>     
         )   
     }
 
     updateUserItem  =(event) => {
         event.preventDefault();
-        this.props.editUser(this.props.index,this.inputfirstname.value , this.inputlastname.value )
+        this.props.editUser(this.props.details.id,this.inputfirstname.value , this.inputlastname.value )
         this.toggleState();
     }
     toggleState =() => {
