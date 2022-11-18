@@ -10,7 +10,7 @@
     "nodemon": "^1.19.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-scripts": "3.0.1",
+    "react-scripts": "5.0.1",
     "tedious": "^6.2.0"
   },
   "scripts": {
